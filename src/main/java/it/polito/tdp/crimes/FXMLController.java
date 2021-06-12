@@ -5,8 +5,11 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.time.Year;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.crimes.model.DistrettoAdiacente;
 import it.polito.tdp.crimes.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,7 +28,7 @@ public class FXMLController {
     private URL location;
 
     @FXML // fx:id="boxAnno"
-    private ComboBox<?> boxAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
     private ComboBox<?> boxMese; // Value injected by FXMLLoader
@@ -48,6 +51,33 @@ public class FXMLController {
     @FXML
     void doCreaReteCittadina(ActionEvent event) {
 
+    	Integer anno = boxAnno.getValue();
+    	if(anno == null) {
+    		txtResult.appendText("seleziona un anno");
+    		return ;
+    	}
+    	
+    	
+    	this.model.creaGrafo(anno);
+    	txtResult.appendText("grafo creato!"+"\n");
+    	txtResult.appendText(" num vertici "+this.model.numVertici()+"\n");
+    	txtResult.appendText(" num archi "+this.model.numArchi()+"\n");
+    	
+   
+    	//SE VOGLIO I VICINI DI TUTTI I VERTICI DEL GRAFO E NON SOLO DI QUELLO PASSATO COME PARAMETRO
+    	//richiamo il metodo dei vertici --> ciclo per tutti i vertici 
+    		//creo nel model un metodo a cui passo un distretto ( come faccio quando vuole i vicini di un vertice da tendina)
+    			// ciclo per tutti gli elementi della classe creata che memorizza vicino+distanza
+    				
+    	
+    	for(Integer d : this.model.getVerticiGrafo()) {
+    		List<DistrettoAdiacente> vicini = this.model.getDistrettiAdiacenti(d);
+    		//in modo che cosi avrò un elenco di vicini per ogni vertice del grafo
+    		txtResult.appendText("\n\nVICINI DEL DISTRETTO: " + d + "\n");
+    		for(DistrettoAdiacente v : vicini)
+    			txtResult.appendText(v +"\n");
+    	}
+    	
     }
 
     @FXML
@@ -69,5 +99,7 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	boxAnno.getItems().addAll(this.model.getAnni());
+    	
     }
 }
